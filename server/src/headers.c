@@ -1,0 +1,36 @@
+#include "headers.h"
+
+const char ACCEPT[]                 = "Accept";
+const char ACCEPT_CHARSET[]         = "Accept-Charset";
+const char ACCEPT_ENCODING[]        = "Accept-Encoding";
+const char ACCEPT_LANGUAGE[]        = "Accept-Language";
+const char ALLOW[]                  = "Allow";
+const char AUTHORIZATION[]          = "Authorization";
+const char CACHE_CONTROL[]          = "Cache-Control";
+const char CONNECTION[]             = "Connection";
+const char COOKIE[]                 = "Cookie";
+const char CONTENT_ENCODING[]       = "Content-Encoding";
+const char CONTENT_LANGUAGE[]       = "Content-Language";
+const char CONTENT_LENGTH[]         = "Content-Length";
+const char CONTENT_LOCATION[]       = "Content-Location";
+const char CONTENT_RANGE[]          = "Content-Range";
+const char CONTENT_TYPE[]           = "Content-Type";
+const char DATE[]                   = "Date";
+const char EXPECT[]                 = "Expect";
+const char EXPIRES[]                = "Expires";
+const char FROM[]                   = "From";
+const char HOST[]                   = "Host";
+const char IF_MATCH[]               = "If-Match";
+const char IF_MODIFIED_SINCE[]      = "If-Modified-Since";
+const char IF_NONE_MATCH[]          = "If-None-Match";
+const char IF_RANGE[]               = "If-Range";
+const char IF_UNMODIFIED_SINCE[]    = "If-Unmodified-Since";
+const char LAST_MODIFIED[]          = "Last-Modified";
+const char PROXY_AUTHORIZATION[]    = "Proxy-Authorization";
+const char RANGE[]                  = "Range";
+const char REFERER[]                = "Referer";
+const char TE[]                     = "TE";
+const char TRANSFER_ENCODING[]      = "Transfer-Encoding";
+const char UPGRADE[]                = "Upgrade";
+const char USER_AGENT[]             = "User-Agent";
+const char VIA[]                    = "Via";
