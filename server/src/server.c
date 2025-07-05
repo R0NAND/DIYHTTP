@@ -41,7 +41,7 @@ int main(){
   for(;;){
       int num_fd = epoll_wait(poll_fd, events, MAX_EVENTS, -1);
       for(int i = 0; i < num_fd; i++){
-          if(events[i].data.fd == receiver_fd){
+          if(events[i].data.fd == receiver_fd){ //TODO: Investigate whether I'd need to iterate until it returns zero...
               int new_fd = accept(receiver_fd, (struct sockaddr*)&client_addr, &addrlen);
               ev.events = EPOLLIN;
               ev.data.fd = new_fd;
@@ -50,8 +50,14 @@ int main(){
           }else{
               printf("Got a request\n");
               char buf[MAX_BYTES];
-              recv(events[i].data.fd, buf, MAX_BYTES, 0);
-              send(events[i].data.fd, "Warm regards", 12, 0);
+              ssize_t n_bytes = recv(events[i].data.fd, buf, MAX_BYTES, 0);
+              if(n_bytes != 0){
+                  send(events[i].data.fd, "Warm regards", 12, 0);
+              }else{
+                  if(close(events[i].data.fd) != 0){
+                      perror("server close error:");
+                  }
+              }
           }
       }
   }

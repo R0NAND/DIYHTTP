@@ -27,12 +27,16 @@ int main(){
 
   sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
   
-  connect(sockfd, res->ai_addr, res->ai_addrlen);
+  if(connect(sockfd, res->ai_addr, res->ai_addrlen) < 0){
+      perror("client: connect");
+      exit(0);
+  }
   while(1){
     printf("sending bytes\n");
     bytes_sent = send(sockfd, request, len, 0);
     bytes_sent = recv(sockfd, buf, MAX_DATA_SIZE - 1, 0);
     printf("received %s", buf); 
+    sleep(1);
   }
   return 0;  
 }
