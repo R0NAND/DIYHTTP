@@ -1,63 +1,59 @@
+#include <arpa/inet.h>
+#include <netdb.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/epoll.h>
 #include <sys/socket.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <netdb.h>
 #include <unistd.h>
 
-#define MYPORT "3490"
-#define BACKLOG 10
-#define MAX_DATA_SIZE 100
 int main(){
-  printf("start\n");
-  struct sockaddr_storage their_addr;
-  socklen_t addr_size;
-  struct addrinfo hints, *res;
-  int sockfd, new_fd;
-  char buf[MAX_DATA_SIZE]; 
-  int msg_len, msg_bytes_rcvd;
-
-  msg_len = strlen(buf);
-
-  memset(&hints, 0, sizeof hints);
-  hints.ai_family = AF_UNSPEC;
-  hints.ai_socktype = SOCK_STREAM;
-  hints.ai_flags = AI_PASSIVE;
-
-  getaddrinfo(NULL, MYPORT, &hints, &res);
+  static const unsigned short int MAIN_PORT = 3490;
+  static const int BACKLOG = 10;
+  static const int MAX_BYTES = 1000; 
+  static const int MAX_EVENTS = 10;
+ 
+  struct sockaddr_in receiver_addr, client_addr;
+  socklen_t addrlen;
+  memset(&receiver_addr, 0, sizeof(receiver_addr));
+  receiver_addr.sin_family = AF_INET;
+  receiver_addr.sin_port = htons(MAIN_PORT);
+  inet_pton(AF_INET, "127.0.0.1", &(receiver_addr.sin_addr));
   
-  printf("starting socket\n");
-  sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-  printf("binding sockeft\n");  
-  bind(sockfd, res->ai_addr, res->ai_addrlen); 
-  printf("listening\n"); 
-  listen(sockfd, BACKLOG);
-  addr_size = sizeof their_addr;
-  while(1){
-    printf("acceptin\n");
-    new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &addr_size); 
-    printf("accepted\n");
-    if(!fork()){
-      close(sockfd);
-      
-      msg_bytes_rcvd = recv(new_fd, buf, MAX_DATA_SIZE - 1, 0);
-      if(msg_bytes_rcvd > 0){
-        printf("%s\n", buf);
-	const char *response =
-                "HTTP/1.1 200 OK\r\n"
-                "Content-Length: 0\r\n"
-                "Connection: close\r\n"
-                "\r\n";
-	msg_bytes_rcvd = send(new_fd, response, strlen(response), 0);
-	printf("msg bytes int: %i\n", msg_bytes_rcvd);
-      }
-      close(new_fd);
-      exit(0);
-    }
+  int receiver_fd = socket(AF_INET, SOCK_STREAM, 0);
+  addrlen = sizeof receiver_addr;
+  if(bind(receiver_fd, (struct sockaddr*)&receiver_addr, addrlen) < 0){
+      close(receiver_fd);
+      perror("server: bind");
+      return 1;
   }
-  printf("sent bytes! Shutting down\n");
-  printf("%s\n", buf);
+  if(listen(receiver_fd, BACKLOG) < 0){
+      close(receiver_fd);
+      perror("server: listen");
+      return 1;
+  }
+ 
+  struct epoll_event ev, events[MAX_EVENTS];
+  int poll_fd = epoll_create1(0);
+  ev.events = EPOLLIN;
+  ev.data.fd = receiver_fd;
+  epoll_ctl(poll_fd, EPOLL_CTL_ADD, receiver_fd, &ev); 
+  for(;;){
+      int num_fd = epoll_wait(poll_fd, events, MAX_EVENTS, -1);
+      for(int i = 0; i < num_fd; i++){
+          if(events[i].data.fd == receiver_fd){
+              int new_fd = accept(receiver_fd, (struct sockaddr*)&client_addr, &addrlen);
+              ev.events = EPOLLIN;
+              ev.data.fd = new_fd;
+              epoll_ctl(poll_fd, EPOLL_CTL_ADD, new_fd, &ev);
+              printf("accepted a new connection\n");
+          }else{
+              printf("Got a request\n");
+              char buf[MAX_BYTES];
+              recv(events[i].data.fd, buf, MAX_BYTES, 0);
+              send(events[i].data.fd, "Warm regards", 12, 0);
+          }
+      }
+  }
   return 0;  
 }

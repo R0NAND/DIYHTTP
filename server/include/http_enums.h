@@ -9,12 +9,13 @@ typedef enum {
   HEAD,
   OPTIONS,
   BAD
-} Methods;
+} Method;
 
 typedef enum {
-    v1_0,
-    v1_1,
-} Versions;
+    V1_0,
+    V1_1,
+    INVALID,
+} Version;
 
 typedef enum {
   OK = 200,
@@ -32,5 +33,5 @@ typedef enum {
   NOT_IMPLEMENTED = 501,
   BAD_GATEWAY = 502,
   SERVICE_UNAVAILABLE = 503
-} Codes;
+} Code;
 #endif

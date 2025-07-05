@@ -1,5 +1,7 @@
 #ifndef HEADERS
 #define HEADERS
+
+#include "span_string.h"
 extern const char ACCEPT[];
 extern const char ACCEPT_CHARSET[];
 extern const char ACCEPT_ENCODING[];
@@ -36,44 +38,44 @@ extern const char USER_AGENT[];
 extern const char VIA[];
 
 typedef struct {
-  char *accept;
-  char *acceptCharset;
-  char *acceptEncoding;
-  char *acceptLanguage;
-  char *allow;
-  char *authorization;
-  char *cacheControl;
-  char *connection;
-  char *cookie;
-  char *contentEncoding;
-  char *contentLanguage;
-  char *contentLength;
-  char *contentLocation;
-  char *contentRange;
-  char *contentType;
-  char *date;
-  char *expect;
-  char *expires;
-  char *from;
-  char *host;
-  char *ifMatch;
-  char *ifModifiedSince;
-  char *ifNoneMatch;
-  char *ifRange;
-  char *ifUnmodifiedSince;
-  char *lastModified;
-  char *proxyAuthorization;
-  char *range;
-  char *referer;
-  char *te;
-  char *transferEncoding;
-  char *upgrade;
-  char *userAgent;
-  char *via;
+  SpanString accept;
+  SpanString acceptCharset;
+  SpanString acceptEncoding;
+  SpanString acceptLanguage;
+  SpanString allow;
+  SpanString authorization;
+  SpanString cacheControl;
+  SpanString connection;
+  SpanString cookie;
+  SpanString contentEncoding;
+  SpanString contentLanguage;
+  SpanString contentLength;
+  SpanString contentLocation;
+  SpanString contentRange;
+  SpanString contentType;
+  SpanString date;
+  SpanString expect;
+  SpanString expires;
+  SpanString from;
+  SpanString host;
+  SpanString ifMatch;
+  SpanString ifModifiedSince;
+  SpanString ifNoneMatch;
+  SpanString ifRange;
+  SpanString ifUnmodifiedSince;
+  SpanString lastModified;
+  SpanString proxyAuthorization;
+  SpanString range;
+  SpanString referer;
+  SpanString te;
+  SpanString transferEncoding;
+  SpanString upgrade;
+  SpanString userAgent;
+  SpanString via;
 } RequestHeaders;
 
 typedef struct {
     const char *header;
-    char **value;
+    SpanString *value;
 } HeaderMap;
 #endif

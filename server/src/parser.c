@@ -9,11 +9,10 @@
 
 int main(){
   int responseCode = 0;
-  char request[] = "GET index.html HTTP1.1\r\n"
-	           "User-Agent: cURL\r\n"
-	           "Connection: Keep-Alive\r\n\r\n";
-  size_t reqLen = strlen(request);
-  char response[1024];
+  char *msg = "GET /index.html HTTP/1.1\r\n"
+	          "User-Agent: cURL\r\n"
+	          "Connection: Keep-Alive\r\n\r\n";
+  SpanString request = {.start = msg, .span = strlen(msg)};
 
   RequestHeaders requestHeaders;
   memset(&requestHeaders, 0, sizeof(requestHeaders));
@@ -57,12 +56,13 @@ int main(){
   RequestLine reqLine;
 
   char *rootDir = "/home/ronan/Dev/DIYHTTP/server/resources";
+  SpanString rootDirStr = {.start = rootDir, .span = strlen(rootDir)};
 
-  responseCode = parse_http_request(request, reqLen, &reqLine, headerMap, sizeof(headerMap));
-  //char *resourcePath = joinPaths(rootDir, reqLine.uri);
-  //if(!isFile(resourcePath)){
-    //return NOT_FOUND;
-  //}
+  responseCode = parse_http_request(request, &reqLine, headerMap, sizeof(headerMap)/sizeof(headerMap[0]));
+  char *resourcePath = joinPaths(&rootDirStr, &reqLine.uri);
+  if(!isFile(resourcePath)){
+    return NOT_FOUND;
+  }
   printf("Server responded with code %i", responseCode);
   return 0;
 }

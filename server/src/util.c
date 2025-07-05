@@ -11,10 +11,13 @@ int isFile(const char *filepath){
   return (stat(filepath, &st) == 0);
 }
 
-char *joinPaths(char *root, char *child){
-  size_t len = strlen(root) + strlen(child) + 1;
-  char *path = malloc(len); 
-  //TODO check for null?
-  snprintf(path, len, "%s%s", root, child);
+char *joinPaths(SpanString *root, SpanString *child){
+  size_t len = root->span + child->span + 1;
+  char *path = malloc(len);
+  if(path == NULL){
+      fprintf(stderr, "Memory allocation failed\n");
+      exit(1);
+  }
+  snprintf(path, len, "%.*s%.*s", (int)root->span, root->start, (int)child->span, child->start);
   return path;
 }
